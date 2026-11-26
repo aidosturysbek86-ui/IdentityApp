@@ -22,7 +22,9 @@ namespace IdentityApp.Controllers
             return View(users);
         }
 
+        [HttpPost]
         [Authorize(Roles = "Admin")] // Тек Admin рөліне рұқсат
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(string id)
         {
             var user = await _context.Users.FindAsync(id);

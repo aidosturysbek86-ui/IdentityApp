@@ -66,16 +66,18 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    // 2. Admin рөлін нақты пайдаланушыға беру
-    // НАЗАР АУДАРЫҢЫЗ: Мұнда сіз тіркелген пайдаланушының email-ін жазыңыз!
-    var adminEmail = "aidos_test@mail.com";
-    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+    // 2. Admin рөлін конфигурациядан алынған email арқылы беру
+    var adminEmail = builder.Configuration["AdminSettings:AdminEmail"];
 
-    if (adminUser != null)
+    if (!string.IsNullOrEmpty(adminEmail))
     {
-        if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
+        var adminUser = await userManager.FindByEmailAsync(adminEmail);
+        if (adminUser != null)
         {
-            await userManager.AddToRoleAsync(adminUser, "Admin");
+            if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
+            {
+                await userManager.AddToRoleAsync(adminUser, "Admin");
+            }
         }
     }
 }
